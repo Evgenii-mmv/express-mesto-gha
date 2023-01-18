@@ -46,6 +46,4 @@ app.use((err, req, res, _next) => {
   return res.status(500).send({ message: err.message });
 });
 
-app.listen(PORT, () => {
-  console.log(`Запущен сервер по порту ${PORT}`);
-});
+app.listen(PORT);
