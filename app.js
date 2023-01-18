@@ -27,6 +27,7 @@ app.use((req, res, next) => {
 
 app.use('/users', require('./routes/user'));
 app.use('/cards', require('./routes/card'));
+app.use('/', require('./routes/noneexistent'));
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, _next) => {

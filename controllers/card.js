@@ -5,6 +5,8 @@ const getCards = (req, res, next) => Card.find({})
   .catch((e) => next(e));
 
 const deleteCard = (req, res, next) => {
+  // const id = req.params.id;
+  // console.log(id);
   Card.findByIdAndRemove(req.params.id)
     .then((card) => {
       if (!card) {
