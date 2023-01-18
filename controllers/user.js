@@ -9,7 +9,12 @@ const getUsers = (req, res, next) => {
 const getUser = (req, res, next) => {
   User.findById(req.params.id)
     .then((user) => {
-      res.status(200).send({ data: user });
+      if (!user) {
+        const err = new Error('CastError');
+        err.name = 'notFound';
+        throw err;
+      }
+      res.send({ data: user });
     }).catch((e) => next(e));
 };
 

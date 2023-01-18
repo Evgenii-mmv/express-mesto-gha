@@ -28,7 +28,7 @@ const likeCard = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        const err = new Error('Card not found');
+        const err = new Error('CastError');
         err.name = 'notFound';
         throw err;
       }
