@@ -13,5 +13,6 @@
 ## Запуск проекта
 
 `npm run start` — запускает сервер   
-`npm run dev` — запускает сервер с hot-reload
-https://github.com/Evgenii-mmv/Express_rep
+`npm run dev` — запускает сервер с hot-reload  
+
+[https://github.com/Evgenii-mmv/Express_rep](https://github.com/Evgenii-mmv/Express_rep)
