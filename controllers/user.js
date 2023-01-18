@@ -11,7 +11,7 @@ const getUser = (req, res, next) => {
     .then((user) => {
       if (!user) {
         const err = new Error('User not found');
-        err.name = 'notFound';
+        err.name = 'CastError';
         throw err;
       }
       res.send({ data: user });
@@ -39,7 +39,7 @@ const updateProfile = (req, res, next) => {
     .then((user) => {
       if (!user) {
         const err = new Error('User not found');
-        err.name = 'notFound';
+        err.name = 'CastError';
         throw err;
       }
       res.send({ data: user });
@@ -60,7 +60,7 @@ const updateAvatar = (req, res, next) => {
     .then((user) => {
       if (!user) {
         const err = new Error('User not found');
-        err.name = 'notFound';
+        err.name = 'CastError';
         throw err;
       }
       res.send({ data: user });
