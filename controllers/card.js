@@ -24,10 +24,10 @@ const createCard = (req, res, next) => {
     .catch((e) => next(e));
 };
 
-// /likes?cardId=89&test=8
+// /likes?id=89&test=8
 const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    req.params.id,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
@@ -42,8 +42,9 @@ const likeCard = (req, res, next) => {
 };
 
 const dislikeCard = (req, res, next) => {
+  console.log(req.params.id);
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    req.params.id,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )
