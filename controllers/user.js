@@ -10,7 +10,7 @@ const getUser = (req, res, next) => {
   User.findById(req.params.id)
     .then((user) => {
       if (!user) {
-        const err = new Error('CastError');
+        const err = new Error('User not found');
         err.name = 'notFound';
         throw err;
       }

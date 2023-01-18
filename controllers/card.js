@@ -7,7 +7,12 @@ const getCards = (req, res, next) => Card.find({})
 const deleteCard = (req, res, next) => {
   Card.findByIdAndRemove(req.params.id)
     .then((card) => {
-      res.status(200).send({ data: card });
+      if (!card) {
+        const err = new Error('Card not found');
+        err.name = 'CastError';
+        throw err;
+      }
+      return res.status(200).send({ data: card });
     }).catch((e) => next(e));
 };
 
@@ -28,8 +33,8 @@ const likeCard = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        const err = new Error('CastError');
-        err.name = 'notFound';
+        const err = new Error('Card not found');
+        err.name = 'CastError';
         throw err;
       }
       return res.status(200).send({ data: card });
@@ -45,7 +50,7 @@ const dislikeCard = (req, res, next) => {
     .then((card) => {
       if (!card) {
         const err = new Error('Card not found');
-        err.name = 'notFound';
+        err.name = 'CastError';
         throw err;
       }
       return res.status(200).send({ data: card });
