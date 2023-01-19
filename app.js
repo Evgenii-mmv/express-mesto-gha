@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const { CODE, MESSAGE } = require('./code_answer/code_answer');
 
 const { PORT = 3000 } = process.env;
 // process- глобальный объект с информацией, с которой работает нода
@@ -25,15 +26,8 @@ app.use((req, res, next) => {
 app.use('/users', require('./routes/user'));
 app.use('/cards', require('./routes/card'));
 app.use('/', require('./routes/noneexistent'));
-// !!!!Я не знаю почему, но не проходят тесты на реквесты, хотя у меня все работает корректно!!!!
-// !!!!Я не знаю почему, но не проходят тесты на реквесты, хотя у меня все работает корректно!!!!
-// !!!!Я не знаю почему, но не проходят тесты на реквесты, хотя у меня все работает корректно!!!!
-// добавил аргумент _next ,
-// т.к без него не работает, добавил нижнее подчеркивание, чтобы показать, что она не используется
-// Да я знаю, что это  не хорошо, но иначе тесты не проходит, я описал выше почему я это сделал
-// я добавил исключение, которое как говорит сам vs code, работает только для данной строки
-// eslint-disable-next-line no-unused-vars
-app.use((err, req, res, _next) => {
+
+app.use((err, req, res, next) => {
   /*
     err.name
       * ValidationError\CastError -> 400
@@ -41,20 +35,18 @@ app.use((err, req, res, _next) => {
       * AccessError -> 403
       * else 500
   */
-  if (err.name === 'ValidationError') {
-    return res.status(400).send({ message: 'Bad Request' });
-  }
-  if (err.name === 'CastError') {
-    return res.status(400).send({ message: 'Bad Request' });
+  if (err.name === 'ValidationError' || err.name === 'CastError') {
+    return res.status(CODE.BAD_REQUEST).send({ message: MESSAGE.BAD_REQUEST });
   }
   if (err.name === 'NotFoundId' || err.name === 'NotFoundPage') {
-    return res.status(404).send({ message: err.message });
+    return res.status(CODE.NOT_FOUND).send({ message: MESSAGE.NOT_FOUND });
   }
   if (err.name === 'AccessError') {
-    return res.status(403).send({ message: 'Forbidden' });
+    return res.status(CODE.FORBIDDEN).send({ message: MESSAGE.FORBIDDEN });
   }
   console.log(err.message);
-  return res.status(500).send('error on the server side');
+  res.status(CODE.DEFAULT).send({ message: MESSAGE.DEFAULT });
+  return next();
 });
 
 app.listen(PORT);

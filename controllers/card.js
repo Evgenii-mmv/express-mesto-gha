@@ -1,12 +1,10 @@
 const Card = require('../models/card');
 const { cardRes } = require('../utils/utils');
+const { CODE } = require('../code_answer/code_answer');
 
 const getCards = (req, res, next) => Card.find({})
   .populate('owner likes')
-  .then((cards) => cards.map((card) => cardRes(card)))
-  .then((cards) => {
-    res.status(200).send({ data: cards });
-  })
+  .then((cards) => res.status(CODE.OK).send(cards.map((card) => cardRes(card))))
   .catch((e) => next(e));
 
 const deleteCard = (req, res, next) => Card.findById(req.params.id)
@@ -25,14 +23,14 @@ const deleteCard = (req, res, next) => Card.findById(req.params.id)
 
     return card.remove();
   })
-  .then((removedCard) => res.status(200).send(cardRes(removedCard)))
+  .then((removedCard) => res.status(CODE.OK).send(cardRes(removedCard)))
   .catch((e) => next(e));
 
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
   const ownerr = req.user._id;
   Card.create({ name, link, owner: ownerr })
-    .then((card) => res.status(200).send(cardRes(card)))
+    .then((card) => res.status(CODE.CREATED).send(cardRes(card)))
     .catch((e) => next(e));
 };
 
@@ -49,7 +47,7 @@ const likeCard = (req, res, next) => {
         err.name = 'NotFoundId';
         throw err;
       }
-      return res.status(200).send(cardRes(card));
+      return res.status(CODE.OK).send(cardRes(card));
     }).catch((e) => next(e));
 };
 
@@ -65,7 +63,7 @@ const dislikeCard = (req, res, next) => {
         err.name = 'NotFoundId';
         throw err;
       }
-      return res.status(200).send(cardRes(card));
+      return res.status(CODE.OK).send(cardRes(card));
     }).catch((e) => next(e));
 };
 
