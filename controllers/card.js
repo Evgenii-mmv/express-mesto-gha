@@ -19,7 +19,6 @@ const deleteCard = (req, res, next) => {
     .populate('owner')
     .then((card) => {
       if (!card) {
-        console.log('кард');
         const err = new Error('Card not found');
         err.name = 'CastError';
         throw err;
