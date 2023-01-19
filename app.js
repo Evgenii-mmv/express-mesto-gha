@@ -44,6 +44,9 @@ app.use((err, req, res, _next) => {
   if (err.name === 'CastError') {
     return res.status(404).send({ message: err.message });
   }
+  if (err.name === 'You are not owner') {
+    return res.status(500).send({ message: err.message });
+  }
   return res.status(500).send({ message: err.message });
 });
 
