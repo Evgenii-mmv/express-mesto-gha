@@ -13,7 +13,7 @@ const deleteCard = (req, res, next) => Card.findById(req.params.id)
   .populate('owner likes')
   .then((card) => {
     if (!card) {
-      const err = new Error('Card not found');
+      const err = new Error('Not Found');
       err.name = 'NotFoundId';
       throw err;
     }
@@ -45,7 +45,7 @@ const likeCard = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        const err = new Error('Card not found');
+        const err = new Error('Not Found');
         err.name = 'NotFoundId';
         throw err;
       }
@@ -61,7 +61,7 @@ const dislikeCard = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        const err = new Error('Card not found');
+        const err = new Error('Not Found');
         err.name = 'NotFoundId';
         throw err;
       }

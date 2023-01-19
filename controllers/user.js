@@ -11,7 +11,7 @@ const getUser = (req, res, next) => {
   User.findById(req.params.id)
     .then((user) => {
       if (!user) {
-        const err = new Error('User not found');
+        const err = new Error('Not Found');
         err.name = 'NotFoundId';
         throw err;
       }
@@ -38,7 +38,7 @@ const updateProfile = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        const err = new Error('User not found');
+        const err = new Error('Not Found');
         err.name = 'NotFoundId';
         throw err;
       }
@@ -58,7 +58,7 @@ const updateAvatar = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        const err = new Error('User not found');
+        const err = new Error('Not Found');
         err.name = 'NotFoundId';
         throw err;
       }

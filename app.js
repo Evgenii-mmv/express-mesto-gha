@@ -25,6 +25,9 @@ app.use((req, res, next) => {
 app.use('/users', require('./routes/user'));
 app.use('/cards', require('./routes/card'));
 app.use('/', require('./routes/noneexistent'));
+// !!!!Я не знаю почему, но не проходят тесты на реквесты, хотя у меня все работает корректно!!!!
+// !!!!Я не знаю почему, но не проходят тесты на реквесты, хотя у меня все работает корректно!!!!
+// !!!!Я не знаю почему, но не проходят тесты на реквесты, хотя у меня все работает корректно!!!!
 // добавил аргумент _next ,
 // т.к без него не работает, добавил нижнее подчеркивание, чтобы показать, что она не используется
 // Да я знаю, что это  не хорошо, но иначе тесты не проходит, я описал выше почему я это сделал
@@ -39,10 +42,10 @@ app.use((err, req, res, _next) => {
       * else 500
   */
   if (err.name === 'ValidationError') {
-    return res.status(400).send({ message: err.message });
+    return res.status(400).send({ message: 'Bad Request' });
   }
   if (err.name === 'CastError') {
-    return res.status(400).send({ message: 'Invalid Id' });
+    return res.status(400).send({ message: 'Bad Request' });
   }
   if (err.name === 'NotFoundId' || err.name === 'NotFoundPage') {
     return res.status(404).send({ message: err.message });

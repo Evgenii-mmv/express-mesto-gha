@@ -1,5 +1,5 @@
 const NotFoundError = (req, res, next) => {
-  const err = new Error('Page not found');
+  const err = new Error('Not Found');
   err.name = 'NotFoundPage';
   next(err);
 };
