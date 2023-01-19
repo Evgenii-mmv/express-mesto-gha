@@ -1,24 +1,18 @@
-const mongoose = require('mongoose');
 const User = require('../models/user');
 const { userRes } = require('../utils/utils');
 
 const getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => users.map((user) => userRes(user)))
-    .then((users) => res.status(200).send({ data: users }))
+    .then((users) => res.status(200).send(users.map((user) => userRes(user))))
     .catch((e) => next(e));
 };
 
 const getUser = (req, res, next) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-    res.status(400).send({ message: 'validation error' });
-    // validation eeror
-  }
   User.findById(req.params.id)
     .then((user) => {
       if (!user) {
         const err = new Error('User not found');
-        err.name = 'CastError';
+        err.name = 'NotFoundId';
         throw err;
       }
       res.send(userRes(user));
@@ -40,13 +34,12 @@ const updateProfile = (req, res, next) => {
     {
       new: true,
       runValidators: true,
-      upsert: true,
     },
   )
     .then((user) => {
       if (!user) {
         const err = new Error('User not found');
-        err.name = 'CastError';
+        err.name = 'NotFoundId';
         throw err;
       }
       res.send(userRes(user));
@@ -61,13 +54,12 @@ const updateAvatar = (req, res, next) => {
     {
       new: true,
       runValidators: true,
-      upsert: true,
     },
   )
     .then((user) => {
       if (!user) {
         const err = new Error('User not found');
-        err.name = 'CastError';
+        err.name = 'NotFoundId';
         throw err;
       }
       res.send(userRes(user));

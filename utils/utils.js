@@ -1,5 +1,9 @@
 const cardRes = (card) => ({
-  likes: card.likes,
+  likes: {
+    name: card.owner.name,
+    about: card.owner.about,
+    _id: card.owner._id,
+  },
   _id: card._id,
   name: card.name,
   link: card.link,

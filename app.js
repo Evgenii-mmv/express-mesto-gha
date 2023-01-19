@@ -1,15 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const path = require('path');
 
 const { PORT = 3000 } = process.env;
 // process- глобальный объект с информацией, с которой работает нода
 const app = express(); // приложение
 // use-используй , туда мы передаем функции промежуточной обработки(мидлевеяры)
 
-app.use(express.static(path.join(__dirname, 'public'))); // экспересс используй эту папку со статическими файлами для раздачи( так мы фронтенд через сервак передаем)
 //  преобразование данных в жсон
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -28,26 +25,27 @@ app.use((req, res, next) => {
 app.use('/users', require('./routes/user'));
 app.use('/cards', require('./routes/card'));
 app.use('/', require('./routes/noneexistent'));
-
-// eslint-disable-next-line no-unused-vars
+// добавил аргумент _next ,
+// т.к без него не работает, добавил нижнее подчеркивание, чтобы показать, что она не используется
 app.use((err, req, res, _next) => {
   /*
     err.name
-      * ValidationError -> 400
-      * CastError -> 404
+      * ValidationError\CastError -> 400
+      * NotFoundId/NotFoundPage -> 404
+      * AccessError -> 403
       * else 500
   */
-
-  if (err.name === 'ValidationError') {
+  if (err.name === 'ValidationError' || err.name === 'CastError') {
     return res.status(400).send({ message: err.message });
   }
-  if (err.name === 'CastError') {
+  if (err.name === 'NotFoundId' || err.name === 'NotFoundPage') {
     return res.status(404).send({ message: err.message });
   }
-  if (err.name === 'You are not owner') {
-    return res.status(500).send({ message: err.message });
+  if (err.name === 'AccessError') {
+    return res.status(403).send({ message: "Forbidden" });
   }
-  return res.status(500).send({ message: err.message });
+  console.log(err.message);
+  return res.status(500).send('error on the server side');
 });
 
 app.listen(PORT);
