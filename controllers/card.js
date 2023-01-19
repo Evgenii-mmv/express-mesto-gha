@@ -24,15 +24,13 @@ const deleteCard = (req, res, next) => {
         err.name = 'CastError';
         throw err;
       }
-      if (card.owner._id !== req.user._id) {
-        console.log('не овнер');
-        console.log('cardOwner', card.owner._id);
-        console.log('reqOwner', req.user._id);
+      if (String(card.owner._id) !== req.user._id) {
         const err = new Error('You are not owner');
         err.name = 'You are not owner';
         throw err;
       }
-      return Card.findByIdAndRemove(req.params.id);
+      return Card.findOneAndDelete(req.params.id)
+        .then((deletecard) => res.status(200).send({ data: deletecard }));
     })
     .catch((e) => next(e));
 };
