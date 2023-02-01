@@ -1,6 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const { CODE, MESSAGE } = require('./code_answer/code_answer');
+const auth = require('./middlewares/auth');
+// const cookieParser = require('cookie-parser');
+const { createUser, login } = require('./controllers/user');
+const { Joi, celebrate, errors } = require('celebrate'); // у нас нет такой зависимости
+
+const RegExp = /^(?:http(s)?:\/\/)[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/;
 
 const { PORT = 3000 } = process.env;
 // process- глобальный объект с информацией, с которой работает нода
@@ -14,19 +20,38 @@ app.use(express.urlencoded({ extended: true }));
 mongoose.set('strictQuery', true);
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-// 63c5560970ded1d3848ad349
-app.use((req, res, next) => {
-  req.user = {
-    _id: '63c5560970ded1d3848ad349',
-  };
+// app.use(cookieParser());
 
-  next();
-});
+app.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(8),
+  }),
+}), login);
+app.post('/signup', celebrate({
+  body: Joi.object().keys({
+    name: Joi.string()
+      .min(2)
+      .max(30),
+    about: Joi.string()
+      .min(2)
+      .max(30),
+    avatar: Joi.string()
+      .min(2)
+      .max(30)
+      .default('https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png')
+      .pattern(RegExp),
+    email: Joi.string().required().email(),
+    password: Joi.string().min(8).required(),
+  }).unknown(true),
+}), createUser);
 
+app.use(auth);
 app.use('/users', require('./routes/user'));
 app.use('/cards', require('./routes/card'));
 app.use('/', require('./routes/noneexistent'));
 
+app.use(errors());
 app.use((err, req, res, next) => {
   /*
     err.name
@@ -44,7 +69,12 @@ app.use((err, req, res, next) => {
   if (err.name === 'AccessError') {
     return res.status(CODE.FORBIDDEN).send({ message: MESSAGE.FORBIDDEN });
   }
-  console.log(err.message);
+  if (err.name === 'Login or password incorrect') {
+    return res.status(CODE.INCORRECT_PAS_OR_LOG).send({ message: MESSAGE.INCORRECT_PAS_OR_LOG });
+  }
+  if (err.name === 'ConflictEmail') {
+    return res.status(CODE.CONFLICT_EMAIL).send({ message: MESSAGE.CONFLICT_EMAIL });
+  }
   res.status(CODE.DEFAULT).send({ message: MESSAGE.DEFAULT });
   return next();
 });
