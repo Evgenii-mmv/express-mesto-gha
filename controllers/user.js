@@ -91,6 +91,17 @@ const updateAvatar = (req, res, next) => {
       res.status(CODE.OK).send(userRes(user));
     }).catch((e) => next(e));
 };
+const getMyProfile = (req, res, next) => {
+  User.findById(req.user.id)
+    .then((user) => {
+      if (!user) {
+        const err = new Error('Not Found');
+        err.name = 'NotFoundId';
+        throw err;
+      }
+      res.status(CODE.OK).send(userRes(user));
+    }).catch((e) => next(e));
+};
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
@@ -104,5 +115,12 @@ const login = (req, res, next) => {
 };
 
 module.exports = {
-  getUsers, getUser, createUser, updateProfile, updateAvatar, login, JWT_SECRET,
+  getUsers,
+  getUser,
+  createUser,
+  updateProfile,
+  updateAvatar,
+  login,
+  JWT_SECRET,
+  getMyProfile
 };

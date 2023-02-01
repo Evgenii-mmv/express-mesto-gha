@@ -1,11 +1,12 @@
 const router = require('express').Router();
 const { celebrate, Joi, errors } = require('celebrate'); // у нас нет такой зависимости
 const {
-  getUsers, getUser, updateProfile, updateAvatar,
+  getUsers, getUser, updateProfile, updateAvatar, getMyProfile,
 } = require('../controllers/user');
 
 const RegExp = /^(?:http(s)?:\/\/)[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/;
 
+router.get('/me', getMyProfile);
 router.get('/', getUsers);
 router.get('/:id', celebrate({
   params: Joi.object().keys({

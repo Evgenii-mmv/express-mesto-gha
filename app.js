@@ -1,10 +1,10 @@
 const express = require('express');
+const { Joi, celebrate, errors } = require('celebrate'); // у нас нет такой зависимости
 const mongoose = require('mongoose');
 const { CODE, MESSAGE } = require('./code_answer/code_answer');
 const auth = require('./middlewares/auth');
 // const cookieParser = require('cookie-parser');
 const { createUser, login } = require('./controllers/user');
-const { Joi, celebrate, errors } = require('celebrate'); // у нас нет такой зависимости
 
 const RegExp = /^(?:http(s)?:\/\/)[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/;
 
