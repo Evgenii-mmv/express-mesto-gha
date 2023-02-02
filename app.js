@@ -53,9 +53,6 @@ app.use('/', require('./routes/noneexistent'));
 
 app.use(errors());
 app.use((err, req, res, next) => {
-  console.log(err);
-  console.log(err.statusCode);
-  console.log(err.name);
   const statusCode = err.statusCode || 500;
   const message = statusCode === 500 ? MESSAGE.DEFAULT : err.message;
   res
