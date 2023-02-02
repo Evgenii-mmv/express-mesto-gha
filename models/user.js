@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt'); // у нас нет такой зависимости
-const validator = require('validator'); // у нас нет такой зависимости
+const bcrypt = require('bcrypt');
+const validator = require('validator');
+
+const { MESSAGE } = require('../code_answer/code_answer');
+const { Unauthorized } = require('../error/unauthorized');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -18,6 +21,9 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+    validate(value) {
+      return validator.isURL(value);
+    },
   },
   email: {
     type: String,
@@ -29,7 +35,6 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    minlength: 8,
     required: true,
     select: false,
   },
@@ -39,16 +44,12 @@ userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        const err = new Error('Not Found');
-        err.name = 'NotFoundId';
-        throw err;
+        throw new Unauthorized(MESSAGE.INCORRECT_PAS_OR_LOG);
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            const err = new Error('Login or password incorrect');
-            err.name = 'Login or password incorrect';
-            throw err;
+            throw new Unauthorized(MESSAGE.INCORRECT_PAS_OR_LOG);
           }
           return user; // теперь user доступен
         });

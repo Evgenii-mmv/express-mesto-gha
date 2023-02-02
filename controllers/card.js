@@ -1,6 +1,8 @@
 const Card = require('../models/card');
 const { cardRes } = require('../utils/utils');
-const { CODE } = require('../code_answer/code_answer');
+const { CODE, MESSAGE } = require('../code_answer/code_answer');
+const { NotFoundError } = require('../error/notfound');
+const { Forbidden } = require('../error/forbidden');
 
 const getCards = (req, res, next) => Card.find({})
   .populate('owner likes')
@@ -11,14 +13,10 @@ const deleteCard = (req, res, next) => Card.findById(req.params.id)
   .populate('owner likes')
   .then((card) => {
     if (!card) {
-      const err = new Error('Not Found');
-      err.name = 'NotFoundId';
-      throw err;
+      return next(new NotFoundError(MESSAGE.NOT_FOUND));
     }
     if (String(card.owner._id) !== req.user.id) {
-      const err = new Error('You are not owner');
-      err.name = 'AccessError';
-      throw err;
+      return next(new Forbidden(MESSAGE.FORBIDDEN));
     }
 
     return card.remove();
@@ -43,9 +41,7 @@ const likeCard = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        const err = new Error('Not Found');
-        err.name = 'NotFoundId';
-        throw err;
+        return next(new NotFoundError(MESSAGE.NOT_FOUND));
       }
       return res.status(CODE.OK).send(cardRes(card));
     }).catch((e) => next(e));
@@ -59,9 +55,7 @@ const dislikeCard = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        const err = new Error('Not Found');
-        err.name = 'NotFoundId';
-        throw err;
+        return next(new NotFoundError(MESSAGE.NOT_FOUND));
       }
       return res.status(CODE.OK).send(cardRes(card));
     }).catch((e) => next(e));

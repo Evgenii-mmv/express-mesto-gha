@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { celebrate, Joi, errors } = require('celebrate'); // у нас нет такой зависимости
+const { celebrate, Joi, errors } = require('celebrate');
 const {
   getUsers, getUser, updateProfile, updateAvatar, getMyProfile,
 } = require('../controllers/user');
