@@ -5,6 +5,7 @@ const { userRes } = require('../utils/utils');
 const { CODE, MESSAGE } = require('../code_answer/code_answer');
 const { NotFoundError } = require('../error/notfound');
 const { ConflictEmail } = require('../error/conflictemail');
+const { BadRequest } = require('../error/badrequest');
 
 const JWT_SECRET = 'reallysecret';
 
@@ -46,6 +47,9 @@ const createUser = (req, res, next) => {
       if (e.code === 11000) {
         return next(new ConflictEmail(MESSAGE.CONFLICT_EMAIL));
       }
+      if (e.name === 'ValidationError') {
+        return next(new BadRequest(MESSAGE.BAD_REQUEST));
+      }
       return next(e);
     });
 };
@@ -65,7 +69,13 @@ const updateProfile = (req, res, next) => {
         return next(new NotFoundError(MESSAGE.NOT_FOUND));
       }
       return res.status(CODE.OK).send(userRes(user));
-    }).catch((e) => next(e));
+    }).catch((e) => {
+      if (e.name === 'ValidationError') {
+        return next(new BadRequest(MESSAGE.BAD_REQUEST));
+      }
+
+      return next(e);
+    });
 };
 
 const updateAvatar = (req, res, next) => {
@@ -93,7 +103,13 @@ const getMyProfile = (req, res, next) => {
       }
       return res.status(CODE.OK).send(userRes(user));
     })
-    .catch((e) => next(e));
+    .catch((e) => {
+      if (e.name === 'ValidationError') {
+        return next(new BadRequest(MESSAGE.BAD_REQUEST));
+      }
+
+      return next(e);
+    });
 };
 
 const login = (req, res, next) => {
@@ -101,7 +117,6 @@ const login = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '7d' });
-      res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true });
       res.status(CODE.OK).send({ Token: token });
     }).catch((e) => next(e));
 };

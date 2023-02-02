@@ -17,7 +17,7 @@ const userRes = (user) => ({
   about: user.about,
   avatar: user.avatar,
   email: user.email,
-  id: user._id,
+  _id: user._id,
 });
 
 module.exports = { userRes, cardRes };

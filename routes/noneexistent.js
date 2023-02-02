@@ -1,6 +1,6 @@
 const router = require('express').Router();
-const { NotFoundError } = require('../controllers/noneexistent');
+const { notfoundpagerout } = require('../controllers/noneexistent');
 
-router.use('/', NotFoundError);
+router.use('/', notfoundpagerout);
 
 module.exports = router;

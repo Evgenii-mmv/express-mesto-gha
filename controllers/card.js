@@ -3,6 +3,7 @@ const { cardRes } = require('../utils/utils');
 const { CODE, MESSAGE } = require('../code_answer/code_answer');
 const { NotFoundError } = require('../error/notfound');
 const { Forbidden } = require('../error/forbidden');
+const { BadRequest } = require('../error/badrequest');
 
 const getCards = (req, res, next) => Card.find({})
   .populate('owner likes')
@@ -29,7 +30,13 @@ const createCard = (req, res, next) => {
   const ownerr = req.user.id;
   Card.create({ name, link, owner: ownerr })
     .then((card) => res.status(CODE.CREATED).send(cardRes(card)))
-    .catch((e) => next(e));
+    .catch((e) => {
+      if (e.name === 'ValidationError') {
+        return next(new BadRequest(MESSAGE.BAD_REQUEST));
+      }
+
+      return next(e);
+    });
 };
 
 // /likes?id=89&test=8
