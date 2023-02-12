@@ -117,7 +117,7 @@ const login = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '7d' });
-      res.status(CODE.OK).send({ Token: token });
+      res.status(CODE.OK).send({ token });
     }).catch((e) => next(e));
 };
 
