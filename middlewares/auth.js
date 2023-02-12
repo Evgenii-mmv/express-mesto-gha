@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken'); // у нас нет такой зависи
 const { MESSAGE } = require('../code_answer/code_answer');
 const { Unauthorized } = require('../error/unauthorized');
 
-
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
   if (!authorization || !authorization.startsWith('Bearer ')) {
