@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken'); // у нас нет такой зависи
 
 const { MESSAGE } = require('../code_answer/code_answer');
 const { Unauthorized } = require('../error/unauthorized');
-const { JWT_SECRET } = require('../controllers/user');
+
 
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
@@ -12,7 +12,7 @@ module.exports = (req, res, next) => {
   const token = authorization.replace('Bearer ', '');
   let payload;
   try {
-    payload = jwt.verify(token, JWT_SECRET);
+    payload = jwt.verify(token, process.env.JWT_SECRET);
   } catch (err) {
     return next(new Unauthorized(MESSAGE.INCORRECT_PAS_OR_LOG));
   }

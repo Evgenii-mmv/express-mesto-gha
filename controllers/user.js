@@ -7,8 +7,6 @@ const { NotFoundError } = require('../error/notfound');
 const { ConflictEmail } = require('../error/conflictemail');
 const { BadRequest } = require('../error/badrequest');
 
-const JWT_SECRET = 'reallysecret';
-
 const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.status(CODE.OK).send(users.map((user) => userRes(user))))
@@ -116,7 +114,7 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '7d' });
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
       res.status(CODE.OK).send({ token });
     }).catch((e) => next(e));
 };
@@ -128,6 +126,5 @@ module.exports = {
   updateProfile,
   updateAvatar,
   login,
-  JWT_SECRET,
   getMyProfile,
 };
