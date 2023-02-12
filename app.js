@@ -3,6 +3,7 @@ const { Joi, celebrate, errors } = require('celebrate');
 const mongoose = require('mongoose');
 const { MESSAGE } = require('./code_answer/code_answer');
 const auth = require('./middlewares/auth');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 // const cookieParser = require('cookie-parser');
 const { createUser, login } = require('./controllers/user');
 
@@ -21,7 +22,12 @@ mongoose.set('strictQuery', true);
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
 // app.use(cookieParser());
-
+app.use(requestLogger);
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
 app.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
@@ -51,6 +57,7 @@ app.use('/users', require('./routes/user'));
 app.use('/cards', require('./routes/card'));
 app.use('/', require('./routes/noneexistent'));
 
+app.use(errorLogger);
 app.use(errors());
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
