@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const { MESSAGE } = require('./code_answer/code_answer');
 const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const cors = require('./middlewares/cors');
 // const cookieParser = require('cookie-parser');
 const { createUser, login } = require('./controllers/user');
 
@@ -23,6 +24,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 
 // app.use(cookieParser());
 app.use(requestLogger);
+app.use(cors);
 app.get('/crash-test', () => {
   setTimeout(() => {
     throw new Error('Сервер сейчас упадёт');
