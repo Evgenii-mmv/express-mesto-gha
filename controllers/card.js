@@ -4,6 +4,7 @@ const { CODE, MESSAGE } = require('../code_answer/code_answer');
 const { NotFoundError } = require('../error/notfound');
 const { Forbidden } = require('../error/forbidden');
 const { BadRequest } = require('../error/badrequest');
+const { CastError } = require('../error/casterror');
 
 const getCards = (req, res, next) => Card.find({})
   .populate('owner likes')
@@ -23,7 +24,12 @@ const deleteCard = (req, res, next) => Card.findById(req.params.id)
     return card.remove();
   })
   .then((removedCard) => res.status(CODE.OK).send(cardRes(removedCard)))
-  .catch((e) => next(e));
+  .catch((e) => {
+    if (e.name === 'CastError') {
+      return next(new CastError(MESSAGE.CAST_ERROR));
+    }
+    return next(e);
+  });
 
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
@@ -39,7 +45,6 @@ const createCard = (req, res, next) => {
     });
 };
 
-// /likes?id=89&test=8
 const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.id,
@@ -51,7 +56,12 @@ const likeCard = (req, res, next) => {
         return next(new NotFoundError(MESSAGE.NOT_FOUND));
       }
       return res.status(CODE.OK).send(cardRes(card));
-    }).catch((e) => next(e));
+    }).catch((e) => {
+      if (e.name === 'CastError') {
+        return next(new CastError(MESSAGE.CAST_ERROR));
+      }
+      return next(e);
+    });
 };
 
 const dislikeCard = (req, res, next) => {
@@ -65,7 +75,12 @@ const dislikeCard = (req, res, next) => {
         return next(new NotFoundError(MESSAGE.NOT_FOUND));
       }
       return res.status(CODE.OK).send(cardRes(card));
-    }).catch((e) => next(e));
+    }).catch((e) => {
+      if (e.name === 'CastError') {
+        return next(new CastError(MESSAGE.CAST_ERROR));
+      }
+      return next(e);
+    });
 };
 
 module.exports = {

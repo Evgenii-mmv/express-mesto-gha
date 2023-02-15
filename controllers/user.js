@@ -6,6 +6,7 @@ const { CODE, MESSAGE } = require('../code_answer/code_answer');
 const { NotFoundError } = require('../error/notfound');
 const { ConflictEmail } = require('../error/conflictemail');
 const { BadRequest } = require('../error/badrequest');
+const { CastError } = require('../error/casterror');
 
 const getUsers = (req, res, next) => {
   User.find({})
@@ -20,7 +21,12 @@ const getUser = (req, res, next) => {
         return next(new NotFoundError(MESSAGE.NOT_FOUND));
       }
       return res.status(CODE.OK).send(userRes(user));
-    }).catch((err) => next(err));
+    }).catch((e) => {
+      if (e.name === 'CastError') {
+        return next(new CastError(MESSAGE.CAST_ERROR));
+      }
+      return next(e);
+    });
 };
 
 const createUser = (req, res, next) => {
@@ -91,7 +97,12 @@ const updateAvatar = (req, res, next) => {
         return next(new NotFoundError(MESSAGE.NOT_FOUND));
       }
       return res.status(CODE.OK).send(userRes(user));
-    }).catch((e) => next(e));
+    }).catch((e) => {
+      if (e.name === 'ValidationError') {
+        return next(new BadRequest(MESSAGE.BAD_REQUEST));
+      }
+      return next(e);
+    });
 };
 const getMyProfile = (req, res, next) => {
   User.findById(req.user.id)
@@ -101,13 +112,7 @@ const getMyProfile = (req, res, next) => {
       }
       return res.status(CODE.OK).send(userRes(user));
     })
-    .catch((e) => {
-      if (e.name === 'ValidationError') {
-        return next(new BadRequest(MESSAGE.BAD_REQUEST));
-      }
-
-      return next(e);
-    });
+    .catch((e) => next(e));
 };
 
 const login = (req, res, next) => {

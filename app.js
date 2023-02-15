@@ -6,15 +6,12 @@ const { MESSAGE } = require('./code_answer/code_answer');
 const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const cors = require('./middlewares/cors');
-// const cookieParser = require('cookie-parser');
 const { createUser, login } = require('./controllers/user');
 
 const RegExp = /^(?:http(s)?:\/\/)[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/;
 
 const { PORT = 3000 } = process.env;
-// process- глобальный объект с информацией, с которой работает нода
-const app = express(); // приложение
-// use-используй , туда мы передаем функции промежуточной обработки(мидлевеяры)
+const app = express();
 
 //  преобразование данных в жсон
 app.use(express.json());
@@ -23,7 +20,6 @@ app.use(express.urlencoded({ extended: true }));
 mongoose.set('strictQuery', true);
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-// app.use(cookieParser());
 app.use(requestLogger);
 app.use(cors);
 app.get('/crash-test', () => {

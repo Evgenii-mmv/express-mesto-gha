@@ -1,4 +1,4 @@
-const jwt = require('jsonwebtoken'); // у нас нет такой зависимости
+const jwt = require('jsonwebtoken');
 
 const { MESSAGE } = require('../code_answer/code_answer');
 const { Unauthorized } = require('../error/unauthorized');

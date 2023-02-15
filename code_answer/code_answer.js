@@ -10,6 +10,7 @@ const CODE = {
 };
 
 const MESSAGE = {
+  CAST_ERROR: 'Cast Error',
   BAD_REQUEST: 'Bad Request',
   FORBIDDEN: 'Forbidden',
   NOT_FOUND: 'Not Found',
